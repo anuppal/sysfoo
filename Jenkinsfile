@@ -25,14 +25,15 @@ pipeline {
       }
     }
 
-    stage('Package'){ 
-      when { 
-        branch 'master' }
+    stage('Package') {
       agent {
         docker {
           image 'maven:3.6.3-jdk-11-slim'
         }
-      
+
+      }
+      when {
+        branch 'master'
       }
       steps {
         sh 'mvn package -DskipTests'
@@ -42,7 +43,8 @@ pipeline {
 
     stage('Docker Build and Publish') {
       when {
-        branch 'master' }
+        branch 'master'
+      }
       steps {
         script {
           docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
@@ -52,7 +54,13 @@ pipeline {
             dockerImage.push("dev")
           }
         }
-      
+
+      }
+    }
+
+    stage('Deploy&Update') {
+      steps {
+        sh 'docker-compose up -d'
       }
     }
 
