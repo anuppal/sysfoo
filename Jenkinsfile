@@ -58,7 +58,7 @@ pipeline {
       }
     }
 
-    stage('Deploy&Update') {
+    stage('DeploytoDev') {
       steps {
         sh 'docker-compose up -d'
       }
